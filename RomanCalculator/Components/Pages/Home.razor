@@ -5,11 +5,9 @@
 @using System.Text.RegularExpressions
 @using System.Text
 
-
-<PageTitle>Römischer Taschenrechner</PageTitle>
-
 <div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl space-y-6">
     <h1 class="text-3xl font-bold text-center text-gray-800">Römischer Taschenrechner</h1>
+    <hr/>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
         <label class="text-right font-medium text-gray-700">Operand A:</label>
@@ -28,13 +26,15 @@
                @bind="InputB" placeholder="z.B. V oder 5" />
     </div>
 
+    <br/><hr />
     <div class="flex justify-center">
         <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-200"
                 @onclick="Calculate">
-            ➕ Berechnen
+            Berechnen
         </button>
     </div>
 
+   <hr/>
     @if (Result != null)
     {
         <div class="bg-gray-50 p-4 rounded-lg text-center shadow">
