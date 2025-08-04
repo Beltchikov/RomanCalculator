@@ -26,9 +26,7 @@
         <input class="border p-2 w-full" @bind="InputB" placeholder="z.B. V oder 5" />
     </div>
 
-    @* <button class="bg-blue-500 text-white p-2 rounded" @onclick="Calculate">Berechnen</button> *@
-    <button class="bg-blue-500 text-white p-2 rounded" @onclick="@(() => Calculate())">Berechnen</button>
-
+    <button class="bg-blue-500 text-white p-2 rounded" @onclick="Calculate">Berechnen</button>
 
     @if (Result != null)
     {
@@ -46,16 +44,16 @@
 </div>
 
 @code {
-    private string InputA;
-    private string InputB;
+    private string InputA = string.Empty;
+    private string InputB = string.Empty;
     private string Operator = "+";
     private int? Result;
-    private string RomanResult;
-    private string Error;
+    private string RomanResult = string.Empty;
+    private string Error = string.Empty;
 
     private void Calculate()
     {
-        Error = null;
+        Error = string.Empty;
         try
         {
             int a = ParseInput(InputA);
@@ -85,14 +83,14 @@
         catch (Exception ex)
         {
             Result = null;
-            RomanResult = null;
+            RomanResult = string.Empty;
             Error = ex.Message;
         }
     }
 
     private int ParseInput(string input)
     {
-        input = input?.Trim().ToUpperInvariant();
+        input = input?.Trim().ToUpperInvariant() ?? throw new ArgumentException("Ungültige Eingabe.");
         if (string.IsNullOrEmpty(input)) throw new ArgumentException("Eingabe darf nicht leer sein.");
 
         if (Regex.IsMatch(input, "^[0-9]+$")) return int.Parse(input);
