@@ -5,41 +5,48 @@
 @using System.Text.RegularExpressions
 @using System.Text
 
-<h1 class="text-2xl font-bold mb-4">Römischer Taschenrechner</h1>
 
-<div class="grid gap-4 max-w-md">
-    <div>
-        <label>Operand A:</label>
-        <input class="border p-2 w-full" @bind="InputA" placeholder="z.B. X oder 10" />
-    </div>
+<PageTitle>Römischer Taschenrechner</PageTitle>
 
-    <div>
-        <label>Operator:</label>
-        <select class="border p-2 w-full" @bind="Operator">
-            <option value="+">+</option>
-            <option value="-">-</option>
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl space-y-6">
+    <h1 class="text-3xl font-bold text-center text-gray-800">Römischer Taschenrechner</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+        <label class="text-right font-medium text-gray-700">Operand A:</label>
+        <input class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+               @bind="InputA" placeholder="z.B. X oder 10" />
+
+        <label class="text-right font-medium text-gray-700">Operator:</label>
+        <select class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+                @bind="Operator">
+            <option value="+">Addition (+)</option>
+            <option value="-">Subtraktion (-)</option>
         </select>
+
+        <label class="text-right font-medium text-gray-700">Operand B:</label>
+        <input class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring focus:border-blue-500"
+               @bind="InputB" placeholder="z.B. V oder 5" />
     </div>
 
-    <div>
-        <label>Operand B:</label>
-        <input class="border p-2 w-full" @bind="InputB" placeholder="z.B. V oder 5" />
+    <div class="flex justify-center">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-200"
+                @onclick="Calculate">
+            ➕ Berechnen
+        </button>
     </div>
-
-    <button class="bg-blue-500 text-white p-2 rounded" @onclick="Calculate">Berechnen</button>
 
     @if (Result != null)
     {
-        <div class="mt-4">
-            <strong>Ergebnis:</strong>
-            <div>Arabisch: @Result</div>
-            <div>Römisch: @RomanResult</div>
+        <div class="bg-gray-50 p-4 rounded-lg text-center shadow">
+            <div class="text-gray-600 text-sm font-semibold">Ergebnis</div>
+            <div class="mt-2 text-xl text-gray-900 font-bold">Arabisch: @Result</div>
+            <div class="text-xl text-gray-900 font-bold">Römisch: @RomanResult</div>
         </div>
     }
 
     @if (!string.IsNullOrEmpty(Error))
     {
-        <div class="text-red-500 mt-2">@Error</div>
+        <div class="text-red-600 text-center font-semibold">@Error</div>
     }
 </div>
 
