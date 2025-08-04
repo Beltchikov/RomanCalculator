@@ -1,7 +1,149 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+@page "/roman-calculator"
+@using System.Text.RegularExpressions
+@using System.Text
 
-<h1>Hello, world 222!</h1>
+<h1 class="text-2xl font-bold mb-4">Römischer Taschenrechner</h1>
 
-Welcome to your new app.
+<div class="grid gap-4 max-w-md">
+    <div>
+        <label>Operand A:</label>
+        <input class="border p-2 w-full" @bind="InputA" placeholder="z.B. X oder 10" />
+    </div>
+
+    <div>
+        <label>Operator:</label>
+        <select class="border p-2 w-full" @bind="Operator">
+            <option value="+">+</option>
+            <option value="-">-</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Operand B:</label>
+        <input class="border p-2 w-full" @bind="InputB" placeholder="z.B. V oder 5" />
+    </div>
+
+    @* <button class="bg-blue-500 text-white p-2 rounded" @onclick="Calculate">Berechnen</button> *@
+    <button class="bg-blue-500 text-white p-2 rounded" @onclick="@(() => Calculate())">Berechnen</button>
+
+
+    @if (Result != null)
+    {
+        <div class="mt-4">
+            <strong>Ergebnis:</strong>
+            <div>Arabisch: @Result</div>
+            <div>Römisch: @RomanResult</div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Error))
+    {
+        <div class="text-red-500 mt-2">@Error</div>
+    }
+</div>
+
+@code {
+    private string InputA;
+    private string InputB;
+    private string Operator = "+";
+    private int? Result;
+    private string RomanResult;
+    private string Error;
+
+    private void Calculate()
+    {
+        Error = null;
+        try
+        {
+            int a = ParseInput(InputA);
+            int b = ParseInput(InputB);
+
+            Result = Operator switch
+            {
+                "+" => a + b,
+                "-" => a - b,
+                _ => throw new InvalidOperationException("Unbekannter Operator")
+            };
+
+            if (Result < 0 || Result > 1000)
+            {
+                RomanResult = "-";
+                Error = "Ergebnis außerhalb des unterstützten Bereichs (0 - 1000).";
+            }
+            else if (Result == 0)
+            {
+                RomanResult = "N";
+            }
+            else
+            {
+                RomanResult = ToRoman(Result.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            Result = null;
+            RomanResult = null;
+            Error = ex.Message;
+        }
+    }
+
+    private int ParseInput(string input)
+    {
+        input = input?.Trim().ToUpperInvariant();
+        if (string.IsNullOrEmpty(input)) throw new ArgumentException("Eingabe darf nicht leer sein.");
+
+        if (Regex.IsMatch(input, "^[0-9]+$")) return int.Parse(input);
+        if (input == "N") return 0;
+
+        return RomanToArabic(input);
+    }
+
+    private int RomanToArabic(string roman)
+    {
+        var romanMap = new Dictionary<char, int>
+        {
+            {'I', 1}, {'V', 5}, {'X', 10},
+            {'L', 50}, {'C', 100}, {'D', 500}, {'M', 1000}
+        };
+
+        int total = 0, prev = 0;
+        foreach (var c in roman.Reverse())
+        {
+            if (!romanMap.TryGetValue(c, out int val))
+                throw new ArgumentException($"Ungültiges römisches Zeichen: {c}");
+
+            if (val < prev)
+                total -= val;
+            else
+            {
+                total += val;
+                prev = val;
+            }
+        }
+        return total;
+    }
+
+    private string ToRoman(int number)
+    {
+        var map = new (int, string)[]
+        {
+            (1000, "M"), (900, "CM"), (500, "D"), (400, "CD"),
+            (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+            (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")
+        };
+
+        var result = new StringBuilder();
+        foreach (var (val, sym) in map)
+        {
+            while (number >= val)
+            {
+                result.Append(sym);
+                number -= val;
+            }
+        }
+        return result.ToString();
+    }
+}
