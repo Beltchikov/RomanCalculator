@@ -5,19 +5,23 @@
 @using System.Text.RegularExpressions
 @using System.Text
 
+<!-- Hauptcontainer: zentriert mit 400px Breite, um 100px nach links verschoben -->
 <div style="margin: 0 auto; width: 400px; transform: translateX(-100px);">
-    <br/>
-    <h1 class="text-3xl font-bold text-center text-gray-800">Römischer Taschenrechner</h1>
-    <hr/>
 
+    <!-- Überschrift und Trennlinie -->
+    <br />
+    <h1 class="text-3xl font-bold text-center text-gray-800">Römischer Taschenrechner</h1>
+    <hr />
+
+    <!-- Eingabefeld-Tabelle: 3 Zeilen, 2 Spalten -->
     <table class="table-auto w-full">
         <tbody>
-            <!-- Reihe 1 -->
+            <!-- Operand A -->
             <tr class="align-middle">
                 <td class="pr-4 text-right font-medium text-gray-700 w-1/3">
                     <label for="inputA">Operand A:</label>
                 </td>
-                <td>
+                <td class="w-full min-w-0">
                     <input id="inputA"
                            style="width:100px"
                            @bind="InputA"
@@ -25,12 +29,12 @@
                 </td>
             </tr>
 
-            <!-- Reihe 2 -->
+            <!-- Operator (Addition/Subtraktion) -->
             <tr class="align-middle">
-                <td class="pr-4 text-right font-medium text-gray-700">
+                <td class="pr-4 text-right font-medium text-gray-700 w-1/3">
                     <label for="operator">Operator:</label>
                 </td>
-                <td>
+                <td class="w-full min-w-0">
                     <select id="operator"
                             class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring focus:border-blue-500"
                             @bind="Operator">
@@ -40,12 +44,12 @@
                 </td>
             </tr>
 
-            <!-- Reihe 3 -->
+            <!-- Operand B -->
             <tr class="align-middle">
-                <td class="pr-4 text-right font-medium text-gray-700">
+                <td class="pr-4 text-right font-medium text-gray-700 w-1/3">
                     <label for="inputB">Operand B:</label>
                 </td>
-                <td>
+                <td class="w-full min-w-0">
                     <input id="inputB"
                            style="width:100px"
                            @bind="InputB"
@@ -55,7 +59,10 @@
         </tbody>
     </table>
 
-    <br/><hr />
+    <br />
+    <hr />
+
+    <!-- Berechnen-Button -->
     <div class="flex justify-center">
         <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition duration-200"
                 @onclick="Calculate">
@@ -63,7 +70,9 @@
         </button>
     </div>
 
-   <hr/>
+    <hr />
+
+    <!-- Ergebnisanzeige -->
     @if (Result != null)
     {
         <div class="bg-gray-50 p-4 rounded-lg text-center shadow">
@@ -73,20 +82,26 @@
         </div>
     }
 
+    <!-- Fehlermeldung -->
     @if (!string.IsNullOrEmpty(Error))
     {
         <div class="text-red-600 text-center font-semibold">@Error</div>
     }
 </div>
 
+
 @code {
+    // Eingabewerte
     private string InputA = string.Empty;
     private string InputB = string.Empty;
     private string Operator = "+";
+
+    // Ergebnisfelder
     private int? Result;
     private string RomanResult = string.Empty;
     private string Error = string.Empty;
 
+    // Hauptlogik: Berechnung ausführen
     private void Calculate()
     {
         Error = string.Empty;
@@ -95,6 +110,7 @@
             int a = ParseInput(InputA);
             int b = ParseInput(InputB);
 
+            // Rechenoperation basierend auf Operator
             Result = Operator switch
             {
                 "+" => a + b,
@@ -102,6 +118,7 @@
                 _ => throw new InvalidOperationException("Unbekannter Operator")
             };
 
+            // Ergebnisvalidierung
             if (Result < 0 || Result > 1000)
             {
                 RomanResult = "-";
@@ -124,6 +141,7 @@
         }
     }
 
+    // Konvertiere Eingabe: arabisch oder römisch nach int
     private int ParseInput(string input)
     {
         input = input?.Trim().ToUpperInvariant() ?? throw new ArgumentException("Ungültige Eingabe.");
@@ -135,6 +153,7 @@
         return RomanToArabic(input);
     }
 
+    // Wandelt römische Zahl nach int um
     private int RomanToArabic(string roman)
     {
         var romanMap = new Dictionary<char, int>
@@ -160,6 +179,7 @@
         return total;
     }
 
+    // Wandelt Zahl (int) in römische Schreibweise um
     private string ToRoman(int number)
     {
         var map = new (int, string)[]
@@ -181,3 +201,4 @@
         return result.ToString();
     }
 }
+
