@@ -24,6 +24,7 @@
                 <td class="w-full min-w-0">
                     <input id="inputA"
                            style="width:100px"
+                           @ref="inputARef"
                            @bind="InputA"
                            placeholder="z.B. X oder 10" />
                 </td>
@@ -91,6 +92,12 @@
 
 
 @code {
+    // Für Fokussierung per JS
+    private ElementReference inputARef;
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
     // Eingabewerte
     private string InputA = string.Empty;
     private string InputB = string.Empty;
@@ -100,6 +107,16 @@
     private int? Result;
     private string RomanResult = string.Empty;
     private string Error = string.Empty;
+
+    // AfterRender Händler wird überschrieben für initialen Fokus
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("focusElement", inputARef);
+        }
+    }
+
 
     // Hauptlogik: Berechnung ausführen
     private void Calculate()

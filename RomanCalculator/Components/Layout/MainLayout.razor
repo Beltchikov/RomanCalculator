@@ -1,5 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
+<script>
+    window.focusElement = function (element) {
+        if (element) {
+            element.focus();
+        }
+    };
+</script>
+
 @Body
 
 <div id="blazor-error-ui">
